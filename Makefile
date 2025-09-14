@@ -3,7 +3,9 @@ CFLAGS = -ffreestanding -Wall -Wextra -Werror
 AS = i686-elf-as
 LDFLAGS = -ffreestanding -nostdlib -lgcc
 
-OBJECTS = boot.o kmain.o
+MKRESCUE = grub-mkrescue
+
+OBJECTS = boot.o kmain.o io.o
 
 all: kernel.elf
 
@@ -12,7 +14,7 @@ run: myos.iso
 
 myos.iso: kernel.elf
 	cp kernel.elf isodir/boot
-	i686-elf-grub-mkrescue -o myos.iso isodir
+	$(MKRESCUE) -o myos.iso isodir
 
 kernel.elf: $(OBJECTS) linker.ld
 	$(CC) -T linker.ld -o kernel.elf $(LDFLAGS) $(OBJECTS)

@@ -1,8 +1,19 @@
 #include <stdint.h>
+#include "io.h"
 
+/* Framebuffer Cursor I/O ports */
+#define FB_COMMAND_PORT 0x3D4
+#define FB_DATA_PORT    0x3D5
+
+/* High/Low data byte commands */
+#define FB_HIGH_BYTE_COMMAND 14
+#define FB_LOW_BYTE_COMMAND  15
+
+/* Framebuffer provides a 80 x 25 grid */
 #define VGA_MAX_COLUMNS 80
 #define VGA_MAX_ROWS    25
 
+/* Frambebuffer memory mapped starting address */
 uint16_t *vga_framebuffer = (uint16_t *)0x000B8000;
 
 unsigned int vga_column_idx = 0;
@@ -52,6 +63,16 @@ void terminal_puts(char *str)
   }
 }
 
+void fb_update_cursor(uint16_t pos)
+{
+  /* Send high byte of the position */
+  outb(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
+  outb(FB_DATA_PORT, (pos >> 8) & 0xFF);
+
+  /* Send low byte of the position */
+  outb(FB_COMMAND_PORT, FB_LOW_BYTE_COMMAND);
+  outb(FB_DATA_PORT, pos & 0xFF);
+}
 
 /*
  * The C kernel entrypoint
@@ -59,5 +80,8 @@ void terminal_puts(char *str)
 void kmain(void)
 {
   terminal_puts("Hello World!");
+
+  /* Update cursor */
+  fb_update_cursor(81);
 
 }

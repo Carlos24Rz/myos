@@ -29,7 +29,7 @@ loader:
   # Set stack pointer for C runtime
   movl $stack_top, %esp
 
-  # Call C kernel etnry poin
+  # Call C kernel entry point
   call kmain
 
 .loop:

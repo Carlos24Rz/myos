@@ -1,87 +1,12 @@
-#include <stdint.h>
-#include "io.h"
+#include "framebuffer.h"
 
-/* Framebuffer Cursor I/O ports */
-#define FB_COMMAND_PORT 0x3D4
-#define FB_DATA_PORT    0x3D5
-
-/* High/Low data byte commands */
-#define FB_HIGH_BYTE_COMMAND 14
-#define FB_LOW_BYTE_COMMAND  15
-
-/* Framebuffer provides a 80 x 25 grid */
-#define VGA_MAX_COLUMNS 80
-#define VGA_MAX_ROWS    25
-
-/* Frambebuffer memory mapped starting address */
-uint16_t *vga_framebuffer = (uint16_t *)0x000B8000;
-
-unsigned int vga_column_idx = 0;
-unsigned int vga_row_idx    = 0;
-
-enum VGA_COLORS {
-  VGA_COLOR_BLACK = 0,
-  VGA_COLOR_BLUE,
-  VGA_COLOR_GREEN,
-  VGA_COLOR_CYAN,
-  VGA_COLOR_RED,
-  VGA_COLOR_MAGENTA,
-  VGA_COLOR_BROWN,
-  VGA_COLOR_LIGHT_GREY,
-  VGA_COLOR_DARK_GREY,
-  VGA_COLOR_LIGHT_BLUE,
-  VGA_COLOR_LIGHT_GREEN,
-  VGA_COLOR_LIGHT_CYAN,
-  VGA_COLOR_LIGHT_RED,
-  VGA_COLOR_LIGHT_MAGENTA,
-  VGA_COLOR_LIGHT_BROWN,
-  VGA_COLOR_WHITE,
-};
-
-void terminal_put(char c)
-{
-  vga_framebuffer[vga_column_idx + vga_row_idx * VGA_MAX_COLUMNS] =
-    c | (VGA_COLOR_WHITE | (VGA_COLOR_BLACK << 4)) << 8;
-
-  if (++vga_column_idx == VGA_MAX_COLUMNS)
-  {
-    vga_column_idx = 0;
-
-    if (++vga_row_idx == VGA_MAX_ROWS)
-    {
-      vga_row_idx = 0;
-    }
-  }
-}
-
-void terminal_puts(char *str)
-{
-  while (*str != '\0')
-  {
-    terminal_put(*str);
-    str++;
-  }
-}
-
-void fb_update_cursor(uint16_t pos)
-{
-  /* Send high byte of the position */
-  outb(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
-  outb(FB_DATA_PORT, (pos >> 8) & 0xFF);
-
-  /* Send low byte of the position */
-  outb(FB_COMMAND_PORT, FB_LOW_BYTE_COMMAND);
-  outb(FB_DATA_PORT, pos & 0xFF);
-}
+#define GREETINGS_LEN 12
 
 /*
  * The C kernel entrypoint
  */
 void kmain(void)
 {
-  terminal_puts("Hello World!");
-
-  /* Update cursor */
-  fb_update_cursor(81);
-
+  unsigned char greetings[GREETINGS_LEN + 1] = "Hello World!";
+  fb_write(greetings, GREETINGS_LEN);
 }

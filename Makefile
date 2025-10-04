@@ -5,12 +5,12 @@ LDFLAGS = -ffreestanding -nostdlib -lgcc
 
 MKRESCUE = grub-mkrescue
 
-OBJECTS = boot.o kmain.o io.o framebuffer.o
+OBJECTS = boot.o kmain.o io.o framebuffer.o serial.o
 
 all: kernel.elf
 
 run: myos.iso
-	qemu-system-i386 -cdrom myos.iso
+	qemu-system-i386 $(QEMUOPTS) -cdrom myos.iso
 
 myos.iso: kernel.elf
 	cp kernel.elf isodir/boot

@@ -11,4 +11,11 @@
  */
 void outb(uint16_t port_address, uint8_t data);
 
+/**
+ * @brief inb - Reads a byte from a I/O port
+ *
+ * @param port_address the I/O port
+ */
+uint8_t inb(uint16_t port_address);
+
 #endif /* KERNEL_IO_H */

@@ -21,7 +21,7 @@ void kmain(void)
   initialize_gdt_entry(&gdt_table[2], 0, 0xFFFFF, KERNEL_DATA_SEGMENT);
 
   gdt_descriptor.size_gdt = sizeof(gdt_table) - 1;
-  gdt_descriptor.address_gdt = (uintptr_t)&gdt_table[0];
+  gdt_descriptor.base_address_gdt = (uintptr_t)&gdt_table[0];
 
   lgdt(&gdt_descriptor);
 

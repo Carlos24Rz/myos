@@ -3,9 +3,9 @@ CFLAGS = -ffreestanding -Wall -Wextra -Werror -MMD -MP
 AS = i686-elf-as
 LDFLAGS = -ffreestanding -nostdlib -lgcc
 
-MKRESCUE = grub-mkrescue
+MKRESCUE = i686-elf-grub-mkrescue
 
-OBJECTS = boot.o kmain.o io.o framebuffer.o serial.o
+OBJECTS = boot.o kmain.o io.o framebuffer.o serial.o gdt_c.o gdt_s.o
 
 all: kernel.elf
 
